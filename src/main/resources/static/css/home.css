@@ -1,0 +1,8 @@
+.scrollable-table {
+    max-height: 450px;
+    overflow-y: auto;
+}
+
+.note-table{
+    height: 450px;
+}

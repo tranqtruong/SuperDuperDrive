@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Home</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" th:href="@{/css/home.css}" />
+    <script defer th:src="@{/js/home.js}"></script>
+  </head>
+  <body>
+    <header>
+      <nav class="navbar bg-body-tertiary">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">
+            <img
+              th:src="@{/img/google-drive-logo.svg}"
+              alt="Logo"
+              width="30"
+              height="24"
+              class="d-inline-block align-text-top"
+            />
+            SuperDuperDrive
+          </a>
+          <form th:action="@{/logout}" method="post">
+            <button type="submit" class="btn btn-dark">Logout</button>
+          </form>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <div class="container">
+        <nav>
+          <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <button
+              data-hash="files"
+              class="nav-link active"
+              id="nav-files-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#nav-home"
+              type="button"
+              role="tab"
+              aria-controls="nav-home"
+              aria-selected="true"
+            >
+              Files
+            </button>
+            <button
+              data-hash="notes"
+              class="nav-link"
+              id="nav-notes-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#nav-profile"
+              type="button"
+              role="tab"
+              aria-controls="nav-profile"
+              aria-selected="false"
+            >
+              Notes
+            </button>
+            <button
+              data-hash="credentials"
+              class="nav-link"
+              id="nav-credentials-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#nav-contact"
+              type="button"
+              role="tab"
+              aria-controls="nav-contact"
+              aria-selected="false"
+            >
+              Credentials
+            </button>
+          </div>
+        </nav>
+        <div class="tab-content" id="nav-tabContent">
+          <div
+            class="tab-pane fade show active"
+            id="nav-home"
+            role="tabpanel"
+            aria-labelledby="nav-home-tab"
+            tabindex="0"
+          >
+            <div class="container">
+              <div class="row">
+                <form
+                  class="row row-cols-lg-auto g-3 align-items-center"
+                  th:action="@{/file#files}"
+                  method="post"
+                  enctype="multipart/form-data"
+                >
+                  <div class="col-12">
+                    <label for="formFile" class="form-label"
+                      >Upload New File:</label
+                    >
+                  </div>
+
+                  <div class="col-12">
+                    <input
+                      class="form-control"
+                      type="file"
+                      id="formFile"
+                      required
+                      name="fileUpload"
+                    />
+                  </div>
+
+                  <div class="col-12">
+                    <button
+                      id="btn-upload-file"
+                      type="submit"
+                      class="btn btn-primary"
+                    >
+                      Upload
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              <div class="row pt-3">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col"></th>
+                      <th scope="col">File Name</th>
+                      <th scope="col"></th>
+                      <th scope="col"></th>
+                      <th scope="col"></th>
+                      <th scope="col"></th>
+                      <th scope="col"></th>
+                      <th scope="col">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr th:each="file, status : ${files}">
+                      <th
+                        colspan="2"
+                        scope="row"
+                        th:text="${status.count}"
+                      ></th>
+                      <td colspan="6" th:text="${file.filename}"></td>
+                      <td>
+                        <a
+                          type="button"
+                          class="btn btn-primary btn-download-file"
+                          th:href="@{'/file/download/' + ${file.fileId} + '#files'}"
+                          >Download</a
+                        >
+                        <a
+                          type="button"
+                          class="btn btn-danger"
+                          th:href="@{'/file/delete/' + ${file.fileId} + '#files'}"
+                          onclick="if (! (confirm('Are you sure you want to delete this file?'))) return false"
+                          >Delete</a
+                        >
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div
+            class="tab-pane fade"
+            id="nav-profile"
+            role="tabpanel"
+            aria-labelledby="nav-profile-tab"
+            tabindex="0"
+          >
+            <div class="container">
+              <div class="row pt-3">
+                <div class="col-2">
+                  <button
+                    id="add-note-btn"
+                    type="button"
+                    class="btn btn-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#noteModal"
+                  >
+                    +Add a new note
+                  </button>
+                  <div
+                    class="modal fade"
+                    id="noteModal"
+                    tabindex="-1"
+                    aria-labelledby="exampleModalLabel"
+                    aria-hidden="true"
+                  >
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h1 class="modal-title fs-5" id="exampleModalLabel">
+                            Note
+                          </h1>
+                          <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                          ></button>
+                        </div>
+                        <form th:action="@{/note#notes}" method="post">
+                          <div class="modal-body">
+                            <input
+                              type="hidden"
+                              class="form-control"
+                              id="inputNoteid"
+                              name="noteid"
+                            />
+                            <div class="mb-3">
+                              <label for="title-note" class="col-form-label"
+                                >Title:</label
+                              >
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="title-note"
+                                name="notetitle"
+                                maxlength="20"
+                                required
+                              />
+                            </div>
+                            <div class="mb-3">
+                              <label
+                                for="description-note"
+                                class="col-form-label"
+                                >Description:</label
+                              >
+                              <textarea
+                                class="form-control"
+                                id="description-note"
+                                name="notedescription"
+                                required
+                                maxlength="1000"
+                              ></textarea>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button
+                              type="button"
+                              class="btn btn-secondary"
+                              data-bs-dismiss="modal"
+                            >
+                              Close
+                            </button>
+                            <button
+                              id="btn-save-note"
+                              type="submit"
+                              class="btn btn-primary"
+                            >
+                              Save changes
+                            </button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row pt-3">
+                <div class="col-9">
+                  <table id="note-table" class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col"></th>
+                        <th scope="col">Title</th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col">Description</th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr class="note-row" th:each="note, noteStart : ${notes}">
+                        <th
+                          colspan="2"
+                          scope="row"
+                          th:text="${noteStart.count}"
+                        ></th>
+                        <td
+                          class="note-title"
+                          colspan="3"
+                          th:text="${note.notetitle}"
+                        ></td>
+                        <td
+                          class="note-description"
+                          colspan="3"
+                          th:text="${note.notedescription}"
+                        ></td>
+                        <td>
+                          <button
+                            type="button"
+                            class="btn btn-primary btn-update btn-edit-note"
+                            data-bs-toggle="modal"
+                            data-bs-target="#noteModal"
+                            th:attr="data-noteid=${note.noteid}"
+                          >
+                            Edit
+                          </button>
+                          <a
+                            th:href="@{'/note/delete/' + ${note.noteid} + '#notes'}"
+                            onclick="if (! (confirm('Are you sure you want to delete this note?'))) return false"
+                            class="btn btn-danger btn-delete-note"
+                            >Delete</a
+                          >
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="row pt-3" th:if="${hasNoteData}">
+                <div class="col-auto">
+                  <label class="col-form-label">Page Size</label>
+                </div>
+                <div class="col-auto">
+                  <select
+                    class="form-select"
+                    aria-label="Default select example"
+                    id="pageSizeSelect"
+                  >
+                    <option
+                      th:each="pageSize : ${pageSizes}"
+                      th:value="${pageSize}"
+                      th:text="${pageSize}"
+                      th:selected="${pageSize == selectedPageSize}"
+                    ></option>
+                  </select>
+                </div>
+                <div class="col-7">
+                  <nav aria-label="Page navigation example">
+                    <div th:if="${startPage != endPage}">
+                      <ul class="pagination justify-content-end">
+                        <li class="page-item" th:if="${!isFirst}">
+                          <a
+                            class="page-link"
+                            th:href="@{'/home?pageNumber=' + ${pNumber-1} + '&pageSize=' + ${selectedPageSize} + '#notes'}"
+                            aria-label="Previous"
+                          >
+                            <span aria-hidden="true">&laquo;</span>
+                          </a>
+                        </li>
+
+                        <li
+                          th:each="num : ${#numbers.sequence(startPage, endPage)}"
+                          class="page-item"
+                          th:classappend="${num == pNumber ? 'active' : ''}"
+                        >
+                          <a
+                            class="page-link"
+                            th:href="@{'/home?pageNumber=' + ${num} + '&pageSize=' + ${selectedPageSize} + '#notes'}"
+                            th:text="${num}"
+                          ></a>
+                        </li>
+
+                        <li class="page-item" th:if="${!isLast}">
+                          <a
+                            class="page-link"
+                            th:href="@{'/home?pageNumber=' + ${pNumber+1} + '&pageSize=' + ${selectedPageSize} + '#notes'}"
+                            aria-label="Next"
+                          >
+                            <span aria-hidden="true">&raquo;</span>
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </nav>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="tab-pane fade"
+            id="nav-contact"
+            role="tabpanel"
+            aria-labelledby="nav-contact-tab"
+            tabindex="0"
+          >
+            <div class="container">
+              <div class="row pt-3">
+                <div class="col-3">
+                  <button
+                    id="btn-add-credential"
+                    type="button"
+                    class="btn btn-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#credentialModal"
+                    data-bs-whatever="@mdo"
+                  >
+                    + Add a new Credential
+                  </button>
+                  <div
+                    class="modal fade"
+                    id="credentialModal"
+                    tabindex="-1"
+                    aria-labelledby="exampleModalLabel"
+                    aria-hidden="true"
+                  >
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h1 class="modal-title fs-5" id="exampleModalLabel2">
+                            Credential
+                          </h1>
+                          <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                          ></button>
+                        </div>
+                        <form
+                          th:action="@{/credential#credentials}"
+                          method="post"
+                        >
+                          <div class="modal-body">
+                            <input
+                              type="hidden"
+                              class="form-control"
+                              id="credential-id"
+                              name="credentialid"
+                            />
+                            <div class="mb-3">
+                              <label for="url-credential" class="col-form-label"
+                                >URL</label
+                              >
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="url-credential"
+                                name="url"
+                                required
+                                maxlength="99"
+                              />
+                            </div>
+
+                            <div class="mb-3">
+                              <label
+                                for="username-credential"
+                                class="col-form-label"
+                                >Username</label
+                              >
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="username-credential"
+                                name="username"
+                                required
+                                maxlength="29"
+                              />
+                            </div>
+
+                            <div class="mb-3">
+                              <label
+                                for="password-credential"
+                                class="col-form-label"
+                                >Password</label
+                              >
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="password-credential"
+                                name="password"
+                              />
+                            </div>
+                          </div>
+
+                          <div class="modal-footer">
+                            <button
+                              type="button"
+                              class="btn btn-secondary"
+                              data-bs-dismiss="modal"
+                            >
+                              Close
+                            </button>
+                            <button
+                              id="btn-save-credential"
+                              type="submit"
+                              class="btn btn-primary"
+                            >
+                              Save changes
+                            </button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-3"></div>
+
+                <div class="col-3">
+                  <form
+                    class="d-flex justify-content-end"
+                    role="search"
+                    th:action="@{'/home' + '#credentials'}"
+                    method="get"
+                  >
+                    <input
+                      class="form-control me-2"
+                      type="search"
+                      name="keyword"
+                      placeholder="Enter url or username"
+                      aria-label="Search"
+                    />
+                    <button class="btn btn-outline-primary" type="submit">
+                      Search
+                    </button>
+                  </form>
+                </div>
+              </div>
+
+              <div class="row pt-3">
+                <div class="col-9">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">URL</th>
+                        <th scope="col">Username</th>
+                        <th scope="col">Password</th>
+                        <th scope="col">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        class="credential-row"
+                        th:each="credential, creStart : ${credentials}"
+                      >
+                        <th scope="row" th:text="${creStart.count}"></th>
+                        <td class="url-td" th:text="${credential.url}"></td>
+                        <td
+                          class="username-td"
+                          th:text="${credential.username}"
+                        ></td>
+                        <td
+                          class="password-td"
+                          th:text="${credential.password}"
+                        ></td>
+                        <td>
+                          <button
+                            type="button"
+                            class="btn btn-primary btn-update btn-edit-credential"
+                            data-bs-toggle="modal"
+                            data-bs-target="#credentialModal"
+                            th:attr="data-credentialid=${credential.credentialid}"
+                          >
+                            Edit
+                          </button>
+                          <a
+                            th:href="@{'/credential/delete/' + ${credential.credentialid} + '#credentials'}"
+                            onclick="if (! (confirm('Are you sure you want to delete this credential?'))) return false"
+                            type="button"
+                            class="btn btn-danger btn-delete-credential"
+                            >Delete</a
+                          >
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+      <div
+        id="liveToast"
+        class="toast"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div class="toast-header">
+          <strong
+            id="title-toast-mes"
+            class="me-auto title-modal-message"
+            th:text="${errorTitle}"
+          ></strong>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="toast"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div
+          id="body-toast-mes"
+          class="toast-body body-modal-message"
+          th:text="${errorMessage}"
+        ></div>
+      </div>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+
+    <script th:if="${invalidForm}">
+      console.log("hello");
+
+      const toastLiveExample = document.getElementById("liveToast");
+      const toastBootstrap =
+        bootstrap.Toast.getOrCreateInstance(toastLiveExample);
+      toastBootstrap.show();
+    </script>
+
+    <script>
+      document
+        .getElementById("pageSizeSelect")
+        .addEventListener("change", function () {
+          window.location.href = "/home?pageSize=" + this.value + "#notes";
+        });
+    </script>
+  </body>
+</html>

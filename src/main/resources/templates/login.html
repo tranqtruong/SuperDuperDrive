@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="canonical"
+      href="https://getbootstrap.com/docs/5.3/examples/modals/"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" th:href="@{/css/modals.css}" />
+    <style>
+      .is-invalid {
+        color: red !important;
+        font-size: 0.8rem !important;
+      }
+
+      .error {
+        color: red !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="modal modal-sheet position-static d-block bg-body-secondary p-4 py-md-5"
+      tabindex="-1"
+      role="dialog"
+      id="modalSignin"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content rounded-4 shadow">
+          <div class="modal-header p-5 pb-4 border-bottom-0">
+            <h1 class="fw-bold mb-0 fs-2">Please Sign in</h1>
+          </div>
+
+          <div class="modal-body p-5 pt-0">
+            <form th:action="@{/login}" method="post">
+              <div
+                id="login-failed"
+                class="text-center error"
+                th:if="${param.error}"
+              >
+                Invalid email/password.
+              </div>
+
+              <div class="form-floating mb-3">
+                <input
+                  type="email"
+                  name="email"
+                  class="form-control rounded-3"
+                  id="floatingEmail"
+                  placeholder="name@example.com"
+                />
+                <label for="floatingInput">Email address</label>
+              </div>
+              <div class="form-floating mb-3">
+                <input
+                  type="password"
+                  name="password"
+                  class="form-control rounded-3"
+                  id="floatingPassword"
+                  placeholder="Password"
+                />
+                <label for="floatingPassword">Password</label>
+              </div>
+              <div class="form-check text-start my-3">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  name="remember-me"
+                  id="remember-me-checkbox"
+                />
+                <label class="form-check-label" for="remember-me-checkbox">
+                  Remember me
+                </label>
+              </div>
+              <button
+                id="sign-in-btn"
+                class="w-100 mb-2 btn btn-lg rounded-3 btn-primary"
+                type="submit"
+              >
+                Sign in
+              </button>
+
+              <div class="row">
+                <div class="col-auto">
+                  <a
+                    class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+                    th:href="@{/signup}"
+                  >
+                    Sign up
+                  </a>
+                </div>
+                <div class="col-auto ms-auto">
+                  <a
+                    data-bs-toggle="modal"
+                    data-bs-target="#staticBackdrop"
+                    class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+                    href="#"
+                  >
+                    Forgot password
+                  </a>
+                </div>
+              </div>
+
+              <hr class="my-4" />
+              <h2 class="fs-5 fw-bold mb-3">Or use a third-party</h2>
+              <a
+                id="continue-with-google"
+                class="w-100 py-2 mb-2 btn btn-outline-secondary rounded-3"
+                th:href="@{/oauth2/authorization/google}"
+              >
+                <ion-icon
+                  class="bi me-1"
+                  width="16"
+                  height="16"
+                  name="logo-google"
+                ></ion-icon>
+                Continue with Google
+              </a>
+            </form>
+          </div>
+
+          <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div
+              id="liveToast"
+              class="toast"
+              role="alert"
+              aria-live="assertive"
+              aria-atomic="true"
+            >
+              <div class="toast-header">
+                <strong
+                  id="title-toast-message"
+                  class="me-auto title-modal-message"
+                ></strong>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="toast"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div
+                id="body-toast-message"
+                class="toast-body body-modal-message"
+              ></div>
+            </div>
+          </div>
+
+          <div
+            class="modal fade"
+            id="staticBackdrop"
+            data-bs-backdrop="static"
+            data-bs-keyboard="false"
+            tabindex="-1"
+            aria-labelledby="staticBackdropLabel"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="staticBackdropLabel">
+                    Don’t know your password?
+                  </h1>
+                  <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                  ></button>
+                </div>
+                <form th:action="@{/resetpass}" method="post">
+                  <div class="modal-body">
+                    <div class="mb-3">
+                      <label for="recipient-name" class="col-form-label"
+                        >Your email address</label
+                      >
+                      <input
+                        name="email"
+                        type="email"
+                        class="form-control"
+                        id="recipient-name"
+                        placeholder="Enter your email address"
+                      />
+                    </div>
+
+                    <p style="font-size: 0.65rem !important">
+                      We’ll send you a link to change your password. Make sure
+                      you enter your email correctly.
+                    </p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">
+                      Request a password reset
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      data-bs-dismiss="modal"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+
+    <script th:if="${successSignup}">
+      const titleModalEL = document.querySelector(".title-modal-message");
+      titleModalEL.textContent = "Sign Up Success";
+
+      const bodyModalEl = document.querySelector(".body-modal-message");
+      bodyModalEl.innerHTML =
+        "Hello. You have successfully registered, please log in.";
+
+      const toastLiveExample1 = document.getElementById("liveToast");
+      const toastBootstrap1 =
+        bootstrap.Toast.getOrCreateInstance(toastLiveExample1);
+      toastBootstrap1.show();
+    </script>
+
+    <script th:if="${successSendmail}">
+      console.log("hello2");
+      const titleModalEL = document.querySelector(".title-modal-message");
+      titleModalEL.textContent = "Check your email";
+
+      const bodyModalEl = document.querySelector(".body-modal-message");
+      bodyModalEl.innerHTML =
+        "We’ve sent instructions on how to change your password to the your email addresses";
+
+      const toastLiveExample = document.getElementById("liveToast");
+      const toastBootstrap =
+        bootstrap.Toast.getOrCreateInstance(toastLiveExample);
+      toastBootstrap.show();
+    </script>
+  </body>
+</html>
